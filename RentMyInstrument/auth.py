@@ -9,12 +9,16 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.test'))
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+        username = request.form.get('email')
     
         user = User.query.filter_by(email=email).first()
-        print(user, email, password, user.isAdmin)
+        userid = User.query.filter_by(username=username).first()
+
         if user:
             # if check_password_hash(user.password, password) and user.isAdmin == True:
             if password==user.password and user.isAdmin == True:
@@ -27,12 +31,26 @@ def login():
                 return redirect(url_for('views.home'))
             else:
                 flash('Incorrect Password! Try again.', category='error')
+        elif userid:
+            # if check_password_hash(userid.password, password) and userid.isAdmin == True:
+            if password==userid.password and userid.isAdmin == True:
+                print('admin')
+                login_user(userid, remember=True)
+                return redirect(url_for('views.test'))
+            # elif check_password_hash(userid.password, password) and userid.isAdmin == False:
+            elif password==userid.password and userid.isAdmin == False:
+                login_user(userid, remember=True)
+                return redirect(url_for('views.home'))
+            else:
+                flash('Incorrect Password! Try again.', category='error')
         else:
             flash('User does not exist', category='error')
     return render_template("login.html", user=current_user)
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.test'))
     if request.method == 'POST':
         print(request.form)
         email = request.form.get('email')

@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
     uploads = db.relationship('Instrument')
     isAdmin = db.Column(db.Boolean, default=False)
     address = db.Column(db.String(80))
-    dob = db.Column(db.DateTime)
+    dob = db.Column(db.Date)
     def get_id(self):
         return self.email
 

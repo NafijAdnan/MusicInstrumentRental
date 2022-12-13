@@ -1,0 +1,19 @@
+body{
+    background: -webkit-linear-gradient(left, #c1c2c8, #c6c6ca);
+}
+.table-list{
+    padding: 3%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    border-radius: 0.5rem;
+    border-color: black;
+    background: #ffffff;
+}
+
+
+/* body {
+    background: #dd5e89;
+    background: -webkit-linear-gradient(to left, #dd5e89, #f7bb97);
+    background: linear-gradient(to left, #dd5e89, #f7bb97);
+    min-height: 100vh;
+  } */

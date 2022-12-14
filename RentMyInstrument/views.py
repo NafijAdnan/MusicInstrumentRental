@@ -94,7 +94,6 @@ def update_profile():
 def upload_history():
     uploads = Instrument.query.filter_by(user=current_user.username).all()
 
-
     return render_template('upload_history.html', user=current_user, instrument=uploads)
 
 @views.route('/delete_instrument/<int:id>')
@@ -103,7 +102,24 @@ def delete(id):
     instrument = Instrument.query.filter_by(id=id).first()
     db.session.delete(instrument)
     db.session.commit()
-    flash('Instrument Deleted Successfully')
+    flash('Instrument Deleted Successfully', category='success')
 
     return redirect(url_for('views.upload_history'))
+
+@views.route('/update_instrument/<int:id>', methods=['GET', 'POST'])
+@login_required
+def update_instrument(id):
+    instrument = Instrument.query.filter_by(id=id).first()
+    if request.method == 'POST':
+        instrument.model = request.form.get('model')
+        instrument.type = request.form.get('type')
+        instrument.color = request.form.get('color')
+        instrument.duration = request.form.get('duration')
+        instrument.price = request.form.get('price')
+        instrument.location = request.form.get('location')
+        db.session.commit()
+        flash('Instrument info updated successfully!')
+        return redirect(url_for('views.upload_history'))
+
+    return render_template('update_instrument.html', instrument=instrument)
 

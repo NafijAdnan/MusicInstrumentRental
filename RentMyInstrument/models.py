@@ -25,7 +25,7 @@ class Instrument(db.Model):
     color = db.Column(db.String(15))
     price = db.Column(db.Integer)
     duration = db.Column(db.Integer)
-    approval = db.Column(db.Boolean, default=False)
+    approval = db.Column(db.String(8), default='Pending')
     user = db.Column(db.String(20), db.ForeignKey('user.username'))
     date = db.Column(db.DateTime(timezone=True), default=func.now())
 

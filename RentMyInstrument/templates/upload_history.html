@@ -37,9 +37,10 @@ messages %} {% for category, message in messages %} {% if category ==
                 <th>Model</th>
                 <th>Type</th>
                 <th>Color</th>
+                <th>Location</th>
                 <th>Duration</th>
-                <th>Upload Date</th>
                 <th>Price</th>
+                <th>Upload Date</th>
                 <th>Approval</th>
                 <th>Action</th>
             </tr>
@@ -50,10 +51,16 @@ messages %} {% for category, message in messages %} {% if category ==
                 <td>{{item.model}}</td>
                 <td>{{item.type}}</td>
                 <td>{{item.color}}</td>
-                <td>{{item.duration}}</td>
+                <td>{{item.location}}</td>
+                <td>{{item.duration}} Days</td>
+                <td>{{item.price}}BDT</td>
                 <td>{{item.date}}</td>
-                <td>{{item.price}}</td>
-                <td>{{item.approval}}</td>
+                <td>{%if item.approval=='Pending'%}
+                    <button type="button" class="btn btn-sm btn-warning">{{item.approval}}</button>
+                    {%elif item.approval=='Approved'%}
+                    <button type="button" class="btn btn-sm btn-success">{{item.approval}}</button>
+                    {%else%}<button type="button" class="btn btn-sm btn-danger">{{item.approval}}</button>{%endif%}
+                </td>
                 <td>
                     <!-- Call to action buttons -->
                     <ul class="list-inline m-0">
@@ -97,14 +104,6 @@ messages %} {% for category, message in messages %} {% if category ==
             
         </tbody>
         <tfoot>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
         </tfoot>
     </table>
 </div>

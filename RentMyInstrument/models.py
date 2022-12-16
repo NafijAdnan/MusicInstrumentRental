@@ -39,4 +39,7 @@ class Order(db.Model):
     pass
 
 class Coupon(db.Model):
-    name = db.Column(db.String(15), primary_key=True)
+    code = db.Column(db.String(15), primary_key=True)
+    duration = db.Column(db.Integer)
+    validity = db.Column(db.Date)
+

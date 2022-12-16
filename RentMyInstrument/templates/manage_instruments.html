@@ -1,0 +1,89 @@
+{% extends 'users_index.html' %}
+{%block title%}Manage Instruments{%endblock%}
+{%block content%}
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="{{ url_for('static', filename='ok/index_tables.css') }}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='ok/modal.css') }}">
+
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'error' %}
+    <div class="alert alert-danger alter-dismissable" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alter-dismissable" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+    
+    <section class="ftco-section">
+        <div class="container table-list">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Table #09</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Model</th>
+                                    <th>Location</th>
+                                    <th>Duration</th>
+                                    <th>Price</th>
+                                    <th>Uploader</th>
+                                    <th>Upload Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for item in instruments%}
+                                <tr>
+                                    <th scope="row">{{item.id}}</th>
+                                    <td>{{item.model}}</td>
+                                    <td>{{item.location}}</td>
+                                    <td>{{item.duration}} Days</td>
+                                    <td>{{item.price}}BDT</td>
+                                    <td>{{item.user}}</td>
+                                    <td>{{item.date}}</td>
+                                    <td>{%if item.approval=='Pending'%}
+                                        <button type="button" class="btn btn-lg btn-warning">{{item.approval}}</button>
+                                        {%elif item.approval=='Approved'%}
+                                        <button type="button" class="btn btn-lg btn-success">{{item.approval}}</button>
+                                        {%else%}<button type="button" class="btn btn-lg btn-danger">{{item.approval}}</button>{%endif%}
+                                    </td>
+                                    <td>
+                                        <a href="{{url_for('admin.approve', id=item.id)}}" class="btn btn-lg btn-success" style="height: 3.5rem; margin-bottom: 6px;">Approve</a><br>
+                                        <a href="{{url_for('admin.reject', id=item.id)}}" class="btn btn-lg btn-danger">Reject</a>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+{%endblock%}

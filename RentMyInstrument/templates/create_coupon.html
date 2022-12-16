@@ -1,0 +1,86 @@
+{% extends 'users_index.html' %}
+{% block title %}Create Coupon{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{url_for('static', filename='ok/card.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='ok/form.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='ok/button.css')}}">
+
+{% with messages = get_flashed_messages(with_categories=true) %} {% if
+messages %} {% for category, message in messages %} {% if category ==
+'error' %}
+<div class="alert alert-danger alter-dismissable" role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% else %}
+<div class="alert alert-success alter-dismissable" role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %} {% endfor %} {% endif %} {% endwith %}
+
+
+<div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Create Coupon</h4>
+        <br>
+        <form class="form-sample" method="post">
+          <p class="card-description">
+          </p>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Coupon Code</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" name="code" id="code"/>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">Duration</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" placeholder="Minimum Rental Duration (days)" name="duration" id="duration"/>
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Valid till:</label>
+                <div class="col-sm-9">
+                  <input class="form-control" placeholder="YYYY/MM/DD" name="validity" id="validity"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <div class="col-sm-9">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <div class="col-sm-9">
+                  <button type="submit" class="btn btn-success btn-icon-text right" style="background-color: rgb(34, 190, 73);">
+                    Add Coupon
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+{% endblock %}

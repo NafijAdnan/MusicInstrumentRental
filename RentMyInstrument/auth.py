@@ -10,7 +10,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('views.test'))
+        return redirect(url_for('views.home'))
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -24,7 +24,7 @@ def login():
             if password==user.password and user.isAdmin == True:
                 print('admin')
                 login_user(user, remember=True)
-                return redirect(url_for('views.test'))
+                return redirect(url_for('admin.dashboard'))
             # elif check_password_hash(user.password, password) and user.isAdmin == False:
             elif password==user.password and user.isAdmin == False:
                 login_user(user, remember=True)
@@ -36,7 +36,7 @@ def login():
             if password==userid.password and userid.isAdmin == True:
                 print('admin')
                 login_user(userid, remember=True)
-                return redirect(url_for('views.test'))
+                return redirect(url_for('admin.dashboard'))
             # elif check_password_hash(userid.password, password) and userid.isAdmin == False:
             elif password==userid.password and userid.isAdmin == False:
                 login_user(userid, remember=True)
@@ -50,7 +50,7 @@ def login():
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('views.test'))
+        return redirect(url_for('views.home'))
     if request.method == 'POST':
         print(request.form)
         email = request.form.get('email')
@@ -61,9 +61,16 @@ def signup():
         cpassword = request.form.get('cpassword')
         contact = request.form.get('contact')
 
-        dup = User.query.filter_by(email=email).first()
-        if dup:
-            flash('User already exists!', category='error')
+        dup_email = User.query.filter_by(email=email).first()
+        dup_username = User.query.filter_by(username=username).first()
+        dup_contact = User.query.filter_by(contact=contact).first()
+        
+        if dup_email:
+            flash('An account with this email is already registered!', category='error')
+        elif dup_username:
+            flash('Username already taken!', category='error')
+        elif dup_contact:
+            flash('An user with this contact number already exists!', category='error')
         elif '@' not in email and len(email)<5:
             flash('Invalid Email Address', category='error')
         elif len(password)<6:

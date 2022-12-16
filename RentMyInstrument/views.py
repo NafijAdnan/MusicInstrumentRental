@@ -2,23 +2,45 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from . import db
 from .models import User, Instrument
+from functools import wraps
 
 views = Blueprint('views', __name__)
 
+
+def user_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            if current_user.isAdmin == False:
+                return f(*args, **kwargs)
+            else:
+                return redirect(url_for('admin.dashboard'))
+        else:
+            return redirect('/')
+    return decorated_function
+
+
 @views.route('/')
 def home():
+    if current_user.is_authenticated:
+        if current_user.isAdmin==True:
+            return redirect(url_for('admin.dashboard'))
     return render_template('base.html')
+
 
 @views.route('/test')
 def test():
     return render_template('test.html')
 
+
 @views.route('/test2')
 def test2():
     return render_template('index.html')
 
+
 @views.route('/profile', methods=['GET', 'POST'])
 @login_required
+@user_required
 def profile():
     if request.method == 'POST':
         pass
@@ -31,8 +53,10 @@ def profile():
         contact = current_user.contact
     return render_template('profile.html', user=current_user)
 
+
 @views.route('/upload_instrument', methods=['GET', 'POST'])
 @login_required
+@user_required
 def upload():
     if request.method == 'POST':
         model = request.form.get('model')
@@ -53,6 +77,7 @@ def upload():
 
     return render_template('upload_instrument.html', user=current_user)
 
+
 @views.route('/update_password', methods=['GET', 'POST'])
 @login_required
 def update_password():
@@ -69,6 +94,7 @@ def update_password():
         else:
             flash('Incorrect Password!', category='error')
     return render_template('change_password.html', user=current_user)
+
 
 @views.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
@@ -89,25 +115,31 @@ def update_profile():
     
     return render_template('edit_profile.html', user=current_user)
 
+
 @views.route('/upload_history', methods=['GET', 'POST'])
 @login_required
+@user_required
 def upload_history():
     uploads = Instrument.query.filter_by(user=current_user.username).all()
 
     return render_template('upload_history.html', user=current_user, instrument=uploads)
 
+
 @views.route('/delete_instrument/<int:id>')
 @login_required
+@user_required
 def delete(id):
     instrument = Instrument.query.filter_by(id=id).first()
     db.session.delete(instrument)
     db.session.commit()
-    flash('Instrument Deleted Successfully', category='success')
+    flash('Instrument Deleted Successfully.', category='error')
 
     return redirect(url_for('views.upload_history'))
 
+
 @views.route('/update_instrument/<int:id>', methods=['GET', 'POST'])
 @login_required
+@user_required
 def update_instrument(id):
     instrument = Instrument.query.filter_by(id=id).first()
     if request.method == 'POST':

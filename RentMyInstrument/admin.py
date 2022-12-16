@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from . import db
 from .models import User, Instrument, Coupon
 from functools import wraps
+from sqlalchemy import desc
 
 admin = Blueprint('admin', __name__)
 
@@ -38,7 +39,7 @@ def manage_users():
 @login_required
 @admin_required
 def manage_instruments():
-    instruments = Instrument.query.order_by(Instrument.id).all()
+    instruments = Instrument.query.order_by(desc(Instrument.approval)).all()
     return render_template('manage_instruments.html', instruments=instruments)
 
 

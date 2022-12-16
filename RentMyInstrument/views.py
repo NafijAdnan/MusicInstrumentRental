@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from . import db
 from .models import User, Instrument
 from functools import wraps
+from sqlalchemy import desc
 
 views = Blueprint('views', __name__)
 
@@ -20,12 +21,13 @@ def user_required(f):
     return decorated_function
 
 
-@views.route('/')
+@views.route('/', methods=['GET', 'POST'])
 def home():
+    if request.method=='POST':print(request.form.get)
     if current_user.is_authenticated:
         if current_user.isAdmin==True:
             return redirect(url_for('admin.dashboard'))
-    return render_template('base.html')
+    return render_template('home.html')
 
 
 @views.route('/test')
@@ -154,4 +156,37 @@ def update_instrument(id):
         return redirect(url_for('views.upload_history'))
 
     return render_template('update_instrument.html', instrument=instrument)
+
+
+@views.route('/instruments')
+def instruments(sort=None):
+    if sort=='asc':
+        instrument = Instrument.query.filter_by(approval='Approved').order_by(Instrument.duration).all()
+    elif sort=='desc':
+        instrument = Instrument.query.filter_by(approval='Approved').order_by(desc(Instrument.duration)).all()
+    else:
+        instrument = Instrument.query.filter_by(approval='Approved').order_by(Instrument.id).all()
+
+    return render_template('instrument_index.html', instrument=instrument)
+
+
+@views.route('/instruments/sort_by_duration_asc')
+def sort_asc():
+    sort = 'asc'
+    return instruments(sort)
+
+@views.route('/instruments/sort_by_duration_desc')
+def sort_desc():
+    sort = 'desc'
+    return instruments(sort)
+
+
+@views.route('/search', methods=['GET', 'POST'])
+def search():
+    search_for = request.form.get('search')
+    instrument = Instrument.query.filter(Instrument.model.like(f'%{search_for}%')).all()
+    instrument += Instrument.query.filter(Instrument.type.like(f'%{search_for}%')).all()
+    print(search_for, instrument)
+    return render_template('instrument_index.html', instrument=instrument)
+
 

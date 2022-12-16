@@ -41,7 +41,7 @@ messages %} {% for category, message in messages %} {% if category ==
                 <th>Duration</th>
                 <th>Price</th>
                 <th>Upload Date</th>
-                <th>Approval</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -73,7 +73,7 @@ messages %} {% for category, message in messages %} {% if category ==
                         </li>
                         <li class="list-inline-item">
                             <!-- <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button> -->
-                            <a class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="modal" data-placement="top" title="Delete" href="#myModal"><i class="fa fa-trash"></i></a>
+                            <a class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="modal" data-placement="top" title="Delete" href="#myModal" style="margin-left: 2px; margin-top: 2px;"><i class="fa fa-trash"></i></a>
                         </li>
                     </ul>
                     <!-- Modal HTML -->

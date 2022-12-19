@@ -61,7 +61,7 @@
 						<div class="col-md-3">
 							<div class="header-logo">
 								<a href="{{url_for('views.home')}}" class="logo">
-									<img src="img/lg.png" alt="">
+									<img src="{{url_for('static', filename='img/lg.png')}}" alt="">
 								</a>
 							</div>
 						</div>
@@ -77,7 +77,7 @@
 										<option value="1">Category 02</option>
 									</select>
 									<input class="input" type="search" placeholder="Search here" name="search">
-									<button class="search-btn" href="{{url_for('views.search')}}" type="submit">Search</button>
+									<button class="search-btn" type="submit">Search</button>
 									<!-- <button class="search-btn" href="/search" type="submit">Search</button> -->
 								</form>
 							</div>

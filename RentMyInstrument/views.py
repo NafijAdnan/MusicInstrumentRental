@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from . import db
-from .models import User, Instrument
+from .models import User, Instrument, Cart
 from functools import wraps
 from sqlalchemy import desc
 
@@ -23,7 +23,10 @@ def user_required(f):
 
 @views.route('/', methods=['GET', 'POST'])
 def home():
-    if request.method=='POST':print(request.form.get)
+    if request.method=='POST':
+        instrument = search()
+        # return redirect(url_for('views.search'))
+        return render_template('instrument_index.html', instrument=instrument)
     if current_user.is_authenticated:
         if current_user.isAdmin==True:
             return redirect(url_for('admin.dashboard'))
@@ -158,7 +161,7 @@ def update_instrument(id):
     return render_template('update_instrument.html', instrument=instrument)
 
 
-@views.route('/instruments')
+@views.route('/instruments', methods=['GET', 'POST'])
 def instruments(sort=None):
     if sort=='asc':
         instrument = Instrument.query.filter_by(approval='Approved').order_by(Instrument.duration).all()
@@ -166,7 +169,8 @@ def instruments(sort=None):
         instrument = Instrument.query.filter_by(approval='Approved').order_by(desc(Instrument.duration)).all()
     else:
         instrument = Instrument.query.filter_by(approval='Approved').order_by(Instrument.id).all()
-
+    if request.method=='POST':
+        instrument = search()
     return render_template('instrument_index.html', instrument=instrument)
 
 
@@ -184,9 +188,53 @@ def sort_desc():
 @views.route('/search', methods=['GET', 'POST'])
 def search():
     search_for = request.form.get('search')
-    instrument = Instrument.query.filter(Instrument.model.like(f'%{search_for}%')).all()
-    instrument += Instrument.query.filter(Instrument.type.like(f'%{search_for}%')).all()
+    instrument = Instrument.query.filter_by(approval='Approved').filter(Instrument.model.like(f'%{search_for}%')).all()
+    instrument += Instrument.query.filter_by(approval='Approved').filter(Instrument.type.like(f'%{search_for}%')).all()
     print(search_for, instrument)
-    return render_template('instrument_index.html', instrument=instrument)
+    # return render_template('instrument_index.html', instrument=instrument)
+    return instrument
+
+
+@views.route('/instrument/<int:id>', methods=['POST', 'GET'])
+def view_instrument(id):
+    instrument = Instrument.query.filter_by(id=id).first()
+    contact = User.query.filter_by(username=Instrument.user).first().contact
+    if current_user.is_authenticated:
+        if request.method == 'POST':
+            cart_item = Cart.query.all()
+            print(cart_item, len(cart_item))
+            if cart_item:
+                return redirect(url_for('views.clear_cart'))
+            else:
+                return redirect(url_for('views.cart', id=id))
+            # return cart(instrument)
+            # return redirect(url_for('views.cart', id=id))
+            # return render_template('cart.html', instrument=instrument, contact=contact)
+    return render_template('instrument_details.html', instrument=instrument, contact=contact)
+
+
+@views.route('/cart/<int:id>')
+@login_required
+def cart(id):
+    instrument = Instrument.query.filter_by(id=id).first()
+    cart_item = Cart(product=instrument.id)
+    db.session.add(cart_item)
+    db.session.commit()
+    return render_template('cart.html', instrument=instrument)
+
+@views.route('/clear_cart')
+@login_required
+def clear_cart():
+    item = Cart.query.all()
+    for i in item:
+        db.session.delete(i)
+    db.session.commit()
+    return redirect(url_for('views.instruments'))
+
+
+@views.route('/payment')
+@login_required
+def payment():
+    return render_template('payment.html')
 
 

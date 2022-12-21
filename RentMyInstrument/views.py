@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from . import db
-from .models import User, Instrument, Cart
+from .models import User, Instrument, Cart, Payment, Coupon, Order
 from functools import wraps
 from sqlalchemy import desc
 
@@ -155,7 +155,7 @@ def update_instrument(id):
         instrument.price = request.form.get('price')
         instrument.location = request.form.get('location')
         db.session.commit()
-        flash('Instrument info updated successfully!')
+        flash('Instrument info updated successfully!', category='success')
         return redirect(url_for('views.upload_history'))
 
     return render_template('update_instrument.html', instrument=instrument)
@@ -199,42 +199,140 @@ def search():
 def view_instrument(id):
     instrument = Instrument.query.filter_by(id=id).first()
     contact = User.query.filter_by(username=Instrument.user).first().contact
-    if current_user.is_authenticated:
-        if request.method == 'POST':
-            cart_item = Cart.query.all()
-            print(cart_item, len(cart_item))
-            if cart_item:
-                return redirect(url_for('views.clear_cart'))
-            else:
+    cart_item = Cart.query.first()
+    if cart_item:
+        if cart_item.product == id:
+            return render_template('instrument_details.html', instrument=instrument, carted=True)
+        else:
+            # if request.method == 'POST':
+                # return redirect(url_for('views.clear_cart'))
+            return render_template('instrument_details.html', instrument=instrument, clear=True)
+    else:
+        if current_user.is_authenticated:
+            if request.method == 'POST':
                 return redirect(url_for('views.cart', id=id))
-            # return cart(instrument)
-            # return redirect(url_for('views.cart', id=id))
-            # return render_template('cart.html', instrument=instrument, contact=contact)
     return render_template('instrument_details.html', instrument=instrument, contact=contact)
 
 
-@views.route('/cart/<int:id>')
+@views.route('/cart/<int:id>', methods=['GET', 'POST'])
 @login_required
 def cart(id):
     instrument = Instrument.query.filter_by(id=id).first()
     cart_item = Cart(product=instrument.id)
     db.session.add(cart_item)
     db.session.commit()
+    return redirect(url_for('views.view_instrument', id=id))
+
+@views.route('/cart', methods=['GET', 'POST'])
+@login_required
+def show_cart():
+    cart = Cart.query.first()
+    if cart:
+        instrument = Instrument.query.filter_by(id=cart.product).first()
+    else:
+        flash('Your cart is empty... Please add something first!', category='error')
+        return redirect(url_for('views.home'))
+    if request.method=='POST':
+        my_cart = Cart.query.first()
+        for item in Payment.query.all():
+            if item.cart_id == my_cart.id:
+                return redirect(url_for('views.checkout'))
+        delivery = request.form.get('delivery')
+        voucher = request.form.get('coupon')
+        product = my_cart.product
+        cart_id = my_cart.id
+        pay = Payment(delivery=delivery, product=product, voucher=voucher, cart_id=cart_id)
+        db.session.add(pay)
+        db.session.commit()
+        return redirect(url_for('views.checkout'))
     return render_template('cart.html', instrument=instrument)
 
 @views.route('/clear_cart')
 @login_required
 def clear_cart():
     item = Cart.query.all()
+    product = Cart.query.first().product
     for i in item:
         db.session.delete(i)
     db.session.commit()
     return redirect(url_for('views.instruments'))
+    # return redirect(url_for('views.view_instrument', id=product))
 
 
-@views.route('/payment')
+@views.route('/checkout', methods=['GET', 'POST'])
 @login_required
-def payment():
-    return render_template('payment.html')
+def checkout():
+    cart = Cart.query.first()
+    pay = Payment.query.filter_by(cart_id=cart.id).first()
+    if not pay:
+        return redirect(url_for('views.instruments'))
+    product = Instrument.query.filter_by(id=pay.product).first()
+    price = product.price
+    delivery = False
+    coupon = None
+    if pay.delivery == 'Home Delivery':
+        price += 60
+        delivery = True
+    if pay.voucher:
+        code = pay.voucher.lower()
+        coupon = Coupon.query.filter_by(code=code).first()
+        if coupon in Coupon.query.all():
+            price -= coupon.discount
+    
+    if request.method == 'POST':
+        pay_by = request.form.get('payment')
+        user = current_user.username
+        user_contact = current_user.contact
+        user_address = current_user.address
+        pay_id = pay.id
+        client = product.user
+        client_contact = User.query.filter_by(username=client).first().contact
+        client_address = User.query.filter_by(username=client).first().address
+        model = product.model
+        duration = product.duration
+        new_order = Order(product=pay.product, user=user, pay_by=pay_by, pay_id=pay_id, amount=price,
+                         client=client, model=model, user_contact=user_contact, user_address=user_address, 
+                         client_contact=client_contact, client_address=client_address, duration=duration)
+        db.session.add(new_order)
+        db.session.commit()
+        return redirect(url_for('views.order'))
+    return render_template('checkout.html', product=product, price=price, delivery=delivery, coupon=coupon)
 
+
+@views.route('/place_order')
+@login_required
+def order():
+    flash('Your order has been placed! Please wait while the product owner reaches to you.', category='success')
+    return redirect(url_for('views.rental_history'))
+
+
+@views.route('/rental_history', methods=['POST', 'GET'])
+@login_required
+def rental_history():
+    rented = Order.query.filter_by(user=current_user.username).all()
+    return render_template('rental_history.html', rented=rented)
+
+
+@views.route('/cancel_order/<int:id>')
+@login_required
+def cancel_order(id):
+    order = Order.query.filter_by(id=id).first()
+    order.status = 'Canceled'
+    db.session.commit()
+    flash('Your order has been canceled.', category='error')
+    return redirect(url_for('views.rental_history'))
+
+
+@views.route('/rent-away-history', methods=['GET', 'POST'])
+@login_required
+def rent_away_history():
+    provided = Order.query.filter_by(client=current_user.username).all()
+    if request.method == "POST":
+        id = request.form.get('id')
+        order = Order.query.filter_by(id=id).first()
+        if request.form.get('paid')=='true':
+            order.paid = True
+        order.delivery = request.form.get('delivery')
+        db.session.commit()
+    return render_template('rent_away_history.html', provided=provided)
 

@@ -14,7 +14,6 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>eCommerce Product Detail</title>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
 
@@ -56,25 +55,29 @@
 							</div>
 							<span class="review-no">41 reviews</span>
 						</div> -->
-						<h5>Instrument ID: <span class="price">{{instrument.id}}</span></h5>
-						<h4>Type: <span class="price">{{instrument.type}}</span></h4>
+						<h5 class="price">Instrument ID: <span class="price">{{instrument.id}}</span></h5>
+						<h4 class="price">Type: <span class="price">{{instrument.type}}</span></h4>
 						<!-- <p class="product-description"></p> -->
-						<li>Duration: <span class="price">{{instrument.duration}} days</span></li>
-						<li>Price: <span class="price">{{instrument.price}}BDT</span></li>
-						<li>Color: <span class="price">{{instrument.color}}</span></li>
+						<li class="price">Duration: <span class="price">{{instrument.duration}} days</span></li>
+						<li class="price">Price: <span class="price">{{instrument.price}}BDT</span></li>
+						<li class="price">Color: <span class="price">{{instrument.color}}</span></li>
 						<!-- <p class="vote"><strong>91%</strong> of buyers enjoyed this product! <strong>(87 votes)</strong></p> -->
-						<h5>Location: <span class="sizes" style="font-size: 15px;">{{instrument.location}}</span></h5>
+						<h5 class="price">Location: <span class="price">{{instrument.location}}</span></h5>
 						<!-- <h5 class="colors">colors:
 							<span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
 							<span class="color green"></span>
 							<span class="color blue"></span>
 						</h5> -->
-						<h5>Contact: <span class="sizes" style="font-size: 15px;">{{contact}}</span></h5>
-						<h5 class="price" style="margin-top: 10px; margin-bottom: -5px;">Uploaded on: <span>{{instrument.date}}</span></h5>
-						<h5 class="price">Uploaded by: <span>{{instrument.user}}</span></h5>
+						<h5 class="price">Contact: <span class="price">{{contact}}</span></h5>
+						<h5 style="margin-top: 10px; margin-bottom: -2px;">Uploaded on: <span class="price">{{instrument.date}}</span></h5>
+						<h5>Uploaded by: <span class="price">{{instrument.user}}</span></h5>
 						<div class="action">
 							<form method="post">
-								<button class="add-to-cart btn btn-default" type="submit">add to cart</button>
+								{%if carted%}
+								<a class="add-to-cart btn btn-default" type="button" href="{{url_for('views.show_cart')}}">Go to Cart</a>
+								{%elif clear%}
+								<a class="add-to-cart btn btn-default" type="button" href="{{url_for('views.clear_cart')}}">Clear Cart</a>{%else%}
+								<button class="add-to-cart btn btn-default" type="submit">Add to Cart</button>{%endif%}
 								<button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button>
 							</form>
 						</div>
@@ -83,6 +86,7 @@
 			</div>
 		</div>
 	</div>
+
   </body>
 </html>
 

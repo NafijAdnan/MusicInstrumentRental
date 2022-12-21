@@ -41,14 +41,21 @@ messages %} {% for category, message in messages %} {% if category ==
                 </div>
               </div>
             </div>
-            
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Discount Amount</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" name="discount" id="discount"/>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="row">
             <div class="col-md-6">
                 <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">Duration</label>
+                  <label class="col-sm-3 col-form-label">Condition</label>
                   <div class="col-sm-9">
-                    <input class="form-control" placeholder="Minimum Rental Duration (days)" name="duration" id="duration"/>
+                    <input class="form-control" placeholder="Minimum Rental Duration (days)" name="condition" id="condition"/>
                   </div>
                 </div>
             </div>

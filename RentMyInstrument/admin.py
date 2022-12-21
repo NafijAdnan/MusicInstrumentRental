@@ -49,9 +49,10 @@ def manage_instruments():
 def add_promo():
     if request.method == 'POST':
         code = request.form.get('code')
-        duration = request.form.get('duration')
+        discount = request.form.get('discount')
+        condition = request.form.get('condition')
         validity = request.form.get('validity')
-        new_coupon = Coupon(code=code, duration=duration, validity=validity)
+        new_coupon = Coupon(code=code, discount=discount, condition=condition, validity=validity)
         db.session.add(new_coupon)
         db.session.commit()
         flash('Coupon has successfully been created!', category='success')

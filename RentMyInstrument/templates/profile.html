@@ -26,7 +26,8 @@
             <ul class="main-nav nav navbar-nav">
                 <li class="{% if request.endpoint=='views.profile' %}active{% endif %}"><a href="{{url_for('views.profile')}}">Account Setting</a></li>
                 <li class="{% if request.endpoint=='views.upload_history' %}active{% endif %}"><a href="{{url_for('views.upload_history')}}">Upload History</a></li>
-                <li><a href="#">Order History</a></li>
+                <li class="{% if request.endpoint=='views.rental_history' %}active{% endif %}"><a href="{{url_for('views.rental_history')}}">Rental History</a></li>
+                <li class="{% if request.endpoint=='views.rent_away_history' %}active{% endif %}"><a href="{{url_for('views.rent_away_history')}}">Rent Away History</a></li>
                 <li class="{% if request.endpoint=='views.update_password' %}active{% endif %}"><a href="{{url_for('views.update_password')}}">Change Password</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

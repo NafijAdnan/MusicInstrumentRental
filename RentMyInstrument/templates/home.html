@@ -22,60 +22,85 @@
 <link type="text/css" rel="stylesheet" href="css/style.css"/>
 
 <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='ok/card.css')}}"/>
-
+<style>
+    .shop:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0px;
+    width: 10%;
+    background: #D10024;
+    opacity: 0.9;
+    -webkit-transform: skewX(-45deg);
+    -ms-transform: skewX(-45deg);
+    transform: skewX(-45deg);
+    }
+</style>
 <!-- SECTION -->
 <div class="container mt-100">
 
-
-
-
-    <div class="row">
-        <div class="col-md-4 col-sm-6">
-            <div class="card mb-30"><a class="card-img-tiles" href="#" data-abc="true">
-                    <div class="inner">
-                        <div class="main-img"><img src="https://i.imgur.com/O0GMYuw.jpg" alt="Category"></div>
-                        <div class="thumblist"><img src="https://i.imgur.com/ILEU18M.jpg" alt="Category"><img
-                                src="https://i.imgur.com/2kePJmX.jpg" alt="Category"></div>
+    <div class="section">
+        <h2 style="color: #ffffff; font-weight: bolder; text-align: center; font-style: normal;">Top Picks</h2>
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
+                <!-- shop -->
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img">
+                            <img src="{{url_for('static', filename='img/guitar.jpg')}}" alt="">
+                        </div>
+                        <div class="shop-body">
+                            <h3>Guitar<br></h3>
+                            <a href="{{url_for('admin.manage_users')}}" class="cta-btn"> <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
                     </div>
-                </a>
-                <div class="card-body text-center">
-                    <h4 class="card-title">Laptops</h4>
-                    <p class="text-muted">Starting from $499</p><a class="btn btn-outline-primary btn-sm" href="#"
-                        data-abc="true">View Products</a>
                 </div>
+                <!-- /shop -->
+
+                <!-- shop -->
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img">
+                            <img src="{{url_for('static', filename='img/piano.jpg')}}" alt="">
+                        </div>
+                        <div class="shop-body">
+                            <h3>Piano<br></h3>
+                            <a href="{{url_for('admin.manage_instruments')}}" class="cta-btn"> <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /shop -->
+
+                <!-- shop -->
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img">
+                            <img src="{{url_for('static', filename='img/drums.png')}}" alt="">
+                        </div>
+                        <div class="shop-body">
+                            <h3>Drum<br>Set</h3>
+                            <a href="{{url_for('admin.add_promo')}}" class="cta-btn"><i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /shop -->
+            </div>
+            <!-- /row -->
+            <div class="row">
+                <div class="col-md-4 col-xs-6"></div>
+                <div class="col-md-4 col-xs-6">
+                    <a class="btn btn-danger btn-lg btn-block" type="button" href="{{url_for('views.instruments')}}" style="background-color: #D10024;">View all</a>
+                </div>
+                <div class="col-md-4 col-xs-6"></div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6">
-            <div class="card mb-30"><a class="card-img-tiles" href="#" data-abc="true">
-                    <div class="inner">
-                        <div class="main-img"><img src="https://i.imgur.com/uRgdVY1.jpg" alt="Category"></div>
-                        <div class="thumblist"><img src="https://i.imgur.com/VwSKS7A.jpg" alt="Category"><img
-                                src="https://i.imgur.com/gTvZ2H5.jpg" alt="Category"></div>
-                    </div>
-                </a>
-                <div class="card-body text-center">
-                    <h4 class="card-title">Mobiles</h4>
-                    <p class="text-muted">Starting from $50</p><a class="btn btn-outline-primary btn-sm" href="#"
-                        data-abc="true">View Products</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-6">
-            <div class="card mb-30"><a class="card-img-tiles" href="#" data-abc="true">
-                    <div class="inner">
-                        <div class="main-img"><img src="https://i.imgur.com/0jO40CF.jpg" alt="Category"></div>
-                        <div class="thumblist"><img src="https://i.imgur.com/dWYAg41.jpg" alt="Category"><img
-                                src="https://i.imgur.com/5oQEZSC.jpg" alt="Category"></div>
-                    </div>
-                </a>
-                <div class="card-body text-center">
-                    <h4 class="card-title">Accessories</h4>
-                    <p class="text-muted">Starting from $9</p><a class="btn btn-outline-primary btn-sm" href="#"
-                        data-abc="true">View Products</a>
-                </div>
-            </div>
-        </div>
+        <!-- /container -->
     </div>
+    <!-- /SECTION -->
+
 </div>
 <!-- /SECTION -->
 
